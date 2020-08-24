@@ -36,10 +36,10 @@ namespace BlogAPI.Controllers
 
             if (blogs == null)
             {
-                return NotFound();
+                return NotFound($"No Blog found!");
             }
 
-            return blogs;
+            return Ok(blogs);
         }
 
         // PUT: api/Blogs/5
@@ -48,16 +48,29 @@ namespace BlogAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBlogs(int id, Blogs blogs)
         {
-            if (id != blogs.Id)
+            var blog = await _context.Blogs.FindAsync(id);
+
+            if (blogs == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(blogs).State = EntityState.Modified;
+            if (blog == null)
+            {
+                return NotFound($"No Blog found!");
+            }
+
+            blog.Title = blogs.Title;
+            blog.Image = blogs.Image;
+            blog.Description = blogs.Description;
+
+            _context.Blogs.Update(blog);
+
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok(blog);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,6 +93,7 @@ namespace BlogAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Blogs>> PostBlogs(Blogs blogs)
         {
+            blogs.Date = DateTime.Now;
             _context.Blogs.Add(blogs);
             await _context.SaveChangesAsync();
 
@@ -91,9 +105,10 @@ namespace BlogAPI.Controllers
         public async Task<ActionResult<Blogs>> DeleteBlogs(int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
+
             if (blogs == null)
             {
-                return NotFound();
+                return NotFound($"No Blog found!");
             }
 
             _context.Blogs.Remove(blogs);
