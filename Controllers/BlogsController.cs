@@ -23,14 +23,14 @@ namespace BlogAPI.Controllers
 
         // GET: api/Blogs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Blogs>>> GetBlogs()
+        public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
         {
             return await _context.Blogs.ToListAsync();
         }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Blogs>> GetBlogs(int id)
+        public async Task<ActionResult<Blog>> GetBlogs(int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
 
@@ -46,7 +46,7 @@ namespace BlogAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlogs(int id, Blogs blogs)
+        public async Task<IActionResult> PutBlogs(int id, Blog blogs)
         {
             var blog = await _context.Blogs.FindAsync(id);
 
@@ -61,7 +61,7 @@ namespace BlogAPI.Controllers
             }
 
             blog.Title = blogs.Title;
-            blog.Image = blogs.Image;
+            blog.ImageURL = blogs.ImageURL;
             blog.Description = blogs.Description;
 
             _context.Blogs.Update(blog);
@@ -83,15 +83,13 @@ namespace BlogAPI.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/Blogs
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Blogs>> PostBlogs(Blogs blogs)
+        public async Task<ActionResult<Blog>> PostBlogs(Blog blogs)
         {
             blogs.Date = DateTime.Now;
             _context.Blogs.Add(blogs);
@@ -102,7 +100,7 @@ namespace BlogAPI.Controllers
 
         // DELETE: api/Blogs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Blogs>> DeleteBlogs(int id)
+        public async Task<ActionResult<Blog>> DeleteBlogs(int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
 
@@ -115,6 +113,17 @@ namespace BlogAPI.Controllers
             await _context.SaveChangesAsync();
 
             return blogs;
+        }
+
+        // POST: api/Blogs/Comment
+        [HttpPost("Comment")]
+        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        {
+            comment.Date = DateTime.Now;
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetBlogs", new { id = comment.Blog.Id }, comment.Blog);
         }
 
         private bool BlogsExists(int id)

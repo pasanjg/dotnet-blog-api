@@ -9,11 +9,20 @@ namespace BlogAPI.Data
 {
     public class BlogAPIContext : DbContext
     {
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+
         public BlogAPIContext (DbContextOptions<BlogAPIContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Blogs> Blogs { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Blog)
+                .WithMany(b => b.Comments);
+        }
+
     }
 }
