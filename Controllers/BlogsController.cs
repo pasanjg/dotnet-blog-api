@@ -25,14 +25,16 @@ namespace BlogAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
         {
-            return await _context.Blogs.ToListAsync();
+            return await _context.Blogs.Include(blog => blog.Comments).ToListAsync();
         }
 
         // GET: api/Blog/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Blog>> GetBlog(int id)
+        public ActionResult<Blog> GetBlog(int id)
         {
-            var blogs = await _context.Blogs.FindAsync(id);
+            // var blogs = await _context.Blogs.FindAsync(id);
+
+            var blogs = _context.Blogs.Where(blog => blog.Id == id).Include(blog => blog.Comments);
 
             if (blogs == null)
             {
@@ -103,6 +105,7 @@ namespace BlogAPI.Controllers
         public async Task<ActionResult<Blog>> DeleteBlog(int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
+            
 
             if (blogs == null)
             {
