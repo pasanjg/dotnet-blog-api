@@ -21,16 +21,16 @@ namespace BlogAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Blogs
+        // GET: api/Blog
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
         {
             return await _context.Blogs.ToListAsync();
         }
 
-        // GET: api/Blogs/5
+        // GET: api/Blog/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Blog>> GetBlogs(int id)
+        public async Task<ActionResult<Blog>> GetBlog(int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
 
@@ -42,11 +42,11 @@ namespace BlogAPI.Controllers
             return Ok(blogs);
         }
 
-        // PUT: api/Blogs/5
+        // PUT: api/Blog/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlogs(int id, Blog blogs)
+        public async Task<IActionResult> PutBlog(int id, Blog blogs)
         {
             var blog = await _context.Blogs.FindAsync(id);
 
@@ -74,7 +74,7 @@ namespace BlogAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BlogsExists(id))
+                if (!BlogExists(id))
                 {
                     return NotFound();
                 }
@@ -85,11 +85,11 @@ namespace BlogAPI.Controllers
             }
         }
 
-        // POST: api/Blogs
+        // POST: api/Blog
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Blog>> PostBlogs(Blog blogs)
+        public async Task<ActionResult<Blog>> PostBlog(Blog blogs)
         {
             blogs.Date = DateTime.Now;
             _context.Blogs.Add(blogs);
@@ -98,9 +98,9 @@ namespace BlogAPI.Controllers
             return CreatedAtAction("GetBlogs", new { id = blogs.Id }, blogs);
         }
 
-        // DELETE: api/Blogs/5
+        // DELETE: api/Blog/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Blog>> DeleteBlogs(int id)
+        public async Task<ActionResult<Blog>> DeleteBlog(int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
 
@@ -126,7 +126,7 @@ namespace BlogAPI.Controllers
             return CreatedAtAction("GetBlogs", new { id = comment.Blog.Id }, comment.Blog);
         }
 
-        private bool BlogsExists(int id)
+        private bool BlogExists(int id)
         {
             return _context.Blogs.Any(e => e.Id == id);
         }

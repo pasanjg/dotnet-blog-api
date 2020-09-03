@@ -14,12 +14,15 @@ namespace BlogAPI.Models
         public int Id { get; set; }
 
         [Required]
+        public int BlogId { get; set; }
+
+        [Required]
         public string Message { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
 
-        [Required]
         public Blog Blog { get; set; }
+
     }
 }

@@ -19,9 +19,12 @@ namespace BlogAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Comment>()
-                .HasOne(c => c.Blog)
-                .WithMany(b => b.Comments);
+            modelBuilder.Entity<Blog>()
+                .HasMany(c => c.Comments)
+                .WithOne(e => e.Blog)
+                .HasForeignKey(e => e.BlogId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

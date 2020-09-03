@@ -29,9 +29,9 @@ namespace BlogAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    BlogId = table.Column<int>(nullable: false),
                     Message = table.Column<string>(nullable: false),
-                    Date = table.Column<DateTime>(nullable: false),
-                    BlogId = table.Column<int>(nullable: false)
+                    Date = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
