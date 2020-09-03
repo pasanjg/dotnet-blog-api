@@ -21,20 +21,20 @@ namespace BlogAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Blog
+        // GET: api/blogs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
         {
             return await _context.Blogs.Include(blog => blog.Comments).ToListAsync();
         }
 
-        // GET: api/Blog/5
+        // GET: api/blogs/5
         [HttpGet("{id}")]
         public ActionResult<Blog> GetBlog(int id)
         {
-            // var blogs = await _context.Blogs.FindAsync(id);
 
-            var blogs = _context.Blogs.Where(blog => blog.Id == id).Include(blog => blog.Comments);
+            var blogs = _context.Blogs.Where(blog => blog.Id == id)
+                                        .Include(blog => blog.Comments);
 
             if (blogs == null)
             {
@@ -44,9 +44,18 @@ namespace BlogAPI.Controllers
             return Ok(blogs);
         }
 
-        // PUT: api/Blog/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        // POST: api/blogs
+        [HttpPost]
+        public async Task<ActionResult<Blog>> PostBlog(Blog blogs)
+        {
+            blogs.Date = DateTime.Now;
+            _context.Blogs.Add(blogs);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetBlogs", new { id = blogs.Id }, blogs);
+        }
+
+        // PUT: api/blogs/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBlog(int id, Blog blogs)
         {
@@ -72,6 +81,7 @@ namespace BlogAPI.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
                 return Ok(blog);
             }
             catch (DbUpdateConcurrencyException)
@@ -87,20 +97,7 @@ namespace BlogAPI.Controllers
             }
         }
 
-        // POST: api/Blog
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Blog>> PostBlog(Blog blogs)
-        {
-            blogs.Date = DateTime.Now;
-            _context.Blogs.Add(blogs);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetBlogs", new { id = blogs.Id }, blogs);
-        }
-
-        // DELETE: api/Blog/5
+        // DELETE: api/blogs/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Blog>> DeleteBlog(int id)
         {
@@ -115,16 +112,17 @@ namespace BlogAPI.Controllers
             _context.Blogs.Remove(blogs);
             await _context.SaveChangesAsync();
 
-            return blogs;
+            return Ok(blogs);
         }
 
-        // POST: api/Blogs/Comment
+        // POST: api/blogs/comment
         [HttpPost("Comment")]
         public async Task<ActionResult<Blog>> PostComment(Comment comment)
         {
             var blogs = await _context.Blogs.FindAsync(comment.BlogId);
 
             comment.Date = DateTime.Now;
+
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 

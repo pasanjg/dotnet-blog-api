@@ -21,7 +21,7 @@ namespace BlogAPI.Data
         {
             modelBuilder.Entity<Blog>()
                 .HasMany(c => c.Comments)
-                .WithOne(e => e.Blog)
+                .WithOne(b => b.Blog)
                 .HasForeignKey(e => e.BlogId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
