@@ -117,13 +117,15 @@ namespace BlogAPI.Controllers
 
         // POST: api/Blogs/Comment
         [HttpPost("Comment")]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<ActionResult<Blog>> PostComment(Comment comment)
         {
+            var blogs = await _context.Blogs.FindAsync(comment.BlogId);
+
             comment.Date = DateTime.Now;
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBlogs", new { id = comment.Blog.Id }, comment.Blog);
+            return CreatedAtAction("GetBlogs", new { id = comment.BlogId }, blogs);
         }
 
         private bool BlogExists(int id)
