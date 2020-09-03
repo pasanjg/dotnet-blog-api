@@ -30,7 +30,7 @@ namespace BlogAPI.Controllers
 
         // GET: api/blogs/5
         [HttpGet("{id}")]
-        public ActionResult<Blog> GetBlog(int id)
+        public ActionResult<Blog> GetBlog([FromQuery] int id)
         {
 
             var blogs = _context.Blogs.Where(blog => blog.Id == id)
@@ -46,7 +46,7 @@ namespace BlogAPI.Controllers
 
         // POST: api/blogs
         [HttpPost]
-        public async Task<ActionResult<Blog>> PostBlog(Blog blogs)
+        public async Task<ActionResult<Blog>> PostBlog([FromBody] Blog blogs)
         {
             blogs.Date = DateTime.Now;
             _context.Blogs.Add(blogs);
@@ -57,7 +57,7 @@ namespace BlogAPI.Controllers
 
         // PUT: api/blogs/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlog(int id, Blog blogs)
+        public async Task<IActionResult> PutBlog([FromQuery] int id, [FromBody] Blog blogs)
         {
             var blog = await _context.Blogs.FindAsync(id);
 
@@ -99,7 +99,7 @@ namespace BlogAPI.Controllers
 
         // DELETE: api/blogs/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Blog>> DeleteBlog(int id)
+        public async Task<ActionResult<Blog>> DeleteBlog([FromQuery] int id)
         {
             var blogs = await _context.Blogs.FindAsync(id);
             
@@ -117,7 +117,7 @@ namespace BlogAPI.Controllers
 
         // POST: api/blogs/comment
         [HttpPost("Comment")]
-        public async Task<ActionResult<Blog>> PostComment(Comment comment)
+        public async Task<ActionResult<Blog>> PostComment([FromBody] Comment comment)
         {
             var blogs = await _context.Blogs.FindAsync(comment.BlogId);
 

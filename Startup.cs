@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BlogAPI.Data;
+using Microsoft.OpenApi.Models;
 
 namespace BlogAPI
 {
@@ -36,6 +37,8 @@ namespace BlogAPI
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +52,9 @@ namespace BlogAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(option => option.SwaggerEndpoint("/swagger/v1/swagger.json", "BlogAPI V1"));
 
             app.UseAuthorization();
 
