@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using BlogAPI.Data;
 using Microsoft.OpenApi.Models;
+using BlogAPI.Services;
 
 namespace BlogAPI
 {
@@ -37,6 +38,8 @@ namespace BlogAPI
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+            services.AddTransient<IPostService, PostService>();
 
             services.AddSwaggerGen();
         }

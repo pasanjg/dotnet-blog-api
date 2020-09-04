@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BlogAPI.Data;
 using BlogAPI.Models;
+using BlogAPI.Services;
 
 namespace BlogAPI.Controllers
 {
@@ -14,27 +15,26 @@ namespace BlogAPI.Controllers
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly BlogAPIContext _context;
+        private readonly IPostService _postService;
 
-        public PostsController(BlogAPIContext context)
+        public PostsController(IPostService postService)
         {
-            _context = context;
+            _postService = postService;
         }
 
         // GET: api/posts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
+        public IEnumerable<Post> GetPosts()
         {
-            return await _context.Posts.Include(post => post.Comments).ToListAsync();
+            return _postService.GetPosts();
         }
 
         // GET: api/posts/5
         [HttpGet("{id}")]
-        public ActionResult<Post> GetPost([FromRoute] int id)
+        public ActionResult<Post> GetPost([FromRoute] int Id)
         {
 
-            var post = _context.Posts.Where(post => post.Id == id)
-                                        .Include(post => post.Comments);
+            Post post = _postService.GetPost(Id);
 
             if (post == null)
             {
@@ -46,92 +46,48 @@ namespace BlogAPI.Controllers
 
         // POST: api/posts
         [HttpPost]
-        public async Task<ActionResult<Post>> CreatePost([FromBody] Post posts)
+        public ActionResult<Post> CreatePost([FromBody] Post post)
         {
-            posts.Date = DateTime.Now;
-            _context.Posts.Add(posts);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPost", new { id = posts.Id }, posts);
+            post = _postService.CreatePost(post);
+            return CreatedAtAction("GetPost", new { id = post.Id }, post);
         }
 
         // PUT: api/posts/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromBody] Post posts)
+        public IActionResult UpdatePost([FromRoute] int Id, [FromBody] Post post)
         {
-            var post = await _context.Posts.FindAsync(id);
-
-            if (posts == null)
+            if (post == null)
             {
                 return BadRequest();
             }
 
-            if (post == null)
+            Post updatedPost = _postService.UpdatePost(Id, post);
+
+            if (updatedPost == null)
             {
                 return NotFound($"No Post found!");
             }
 
-            post.Title = posts.Title;
-            post.ImageURL = posts.ImageURL;
-            post.Description = posts.Description;
-
-            _context.Posts.Update(post);
-
-
-            try
-            {
-                await _context.SaveChangesAsync();
-
-                return Ok(post);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            return Ok(updatedPost);
         }
 
         // DELETE: api/posts/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Post>> DeletePost([FromRoute] int id)
+        public ActionResult<Post> DeletePost([FromRoute] int Id)
         {
-            var posts = await _context.Posts.FindAsync(id);
-            
+            Post deletedPost = _postService.DeletePost(Id);
 
-            if (posts == null)
-            {
-                return NotFound($"No Post found!");
-            }
-
-            _context.Posts.Remove(posts);
-            await _context.SaveChangesAsync();
-
-            return Ok(posts);
+            return Ok(deletedPost);
         }
 
         // POST: api/posts/comment
         [HttpPost("Comment")]
-        public async Task<ActionResult<Post>> PostComment([FromBody] Comment comment)
+        public ActionResult<Post> PostComment([FromBody] Comment comment)
         {
-            var posts = await _context.Posts.FindAsync(comment.PostId);
+            Post post = _postService.PostComment(comment);
 
-            comment.Date = DateTime.Now;
-
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPost", new { id = comment.PostId }, posts);
+            return CreatedAtAction("GetPost", new { id = comment.PostId }, post);
         }
 
-        private bool PostExists(int id)
-        {
-            return _context.Posts.Any(e => e.Id == id);
-        }
     }
 }
