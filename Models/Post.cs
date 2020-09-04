@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlogAPI.Models
 {
-    public class Blog
+    public class Post
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]

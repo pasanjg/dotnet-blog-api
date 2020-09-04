@@ -14,7 +14,7 @@ namespace BlogAPI.Models
         public int Id { get; set; }
 
         [Required]
-        public int BlogId { get; set; }
+        public int PostId { get; set; }
 
         [Required]
         public string Message { get; set; }
@@ -22,7 +22,7 @@ namespace BlogAPI.Models
         [Required]
         public DateTime Date { get; set; }
 
-        public Blog Blog { get; set; }
+        public Post Post { get; set; }
 
     }
 }
